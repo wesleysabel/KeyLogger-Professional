@@ -117,7 +117,7 @@ def enviar_email():
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.rambler.ru"
+    servidor_smtp = "smtp.servidor.com/ru"
     porta_smtp = 587
 
     try:
