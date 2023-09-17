@@ -195,6 +195,9 @@ def enviar_email():
         # Cria uma conexão com o servidor
         estabelecer_conexao = smtplib.SMTP(servidor_smtp, porta_smtp)
 
+        # startttls() é um método opcional dependendendo do servidor, nem todos exigem (gmail.com exige, por exemplo)
+        estabelecer_conexao.starttls()
+        
         # Fazendo login na conta
         estabelecer_conexao.login(USUARIO, SENHA)
 
