@@ -188,7 +188,7 @@ def enviar_email():
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.rambler.ru"
+    servidor_smtp = "smtp.servidor.com"  # Use um servidor que tenha autênticação APENAS com e-mail e senha 
     porta_smtp = 587  # A porta padrão da Lib também funciona, que é a 25, mas a 587 é mais comumente usada
 
     try:
