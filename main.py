@@ -252,7 +252,7 @@ def cronometro():
 cronometro_finalizou = False
 threading.Thread(target=cronometro).start()
 
-verificar_teclas = Listener  # váriavel instanciada (objeto) da classe Listerner
+verificar_teclas = Listener  # váriavel instanciada (objeto) da classe Listener
 while True:
     # "Abre" a classe para receber duas funções como argumento para os atributos "on_press" e "on_release" chamando esse
     # procedimento de "verificar"
