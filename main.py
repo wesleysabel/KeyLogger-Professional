@@ -236,7 +236,7 @@ def enviar_email():
 def cronometro():
     global cronometro_finalizou
     # Cronômetro inicia em segundo plano, enquanto captura as teclas
-    # Caso queria mudar alterar o valor do temporizador e do range do loop
+    # Caso queria alterar o tempo, mude o valor do temporizador e do range do loop
     temporizador = 60
     for t in range(60):
         temporizador -= 1
