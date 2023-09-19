@@ -1,6 +1,6 @@
 # KeyLogger-Professional
 
-Keylogger totalmente funcional.
+Keylogger (quase) totalmente funcional.
 Caso for usar o código, assim como está escrito nos próprios comentários, certifique-se de usar um servidor de e-mail que tenha autenticação APENAS com usuário e senha.
 Não esqueça de fazer o download das bibliotecas necessárias
 
