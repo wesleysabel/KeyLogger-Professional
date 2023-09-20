@@ -454,7 +454,7 @@ def enviar_email():
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.gmail.com"
+    servidor_smtp = "smtp.servidor.com"
     porta_smtp = 587  # A porta padrão da Lib também funciona, que é a 25, mas a 587 é mais comumente usada
 
     try:
