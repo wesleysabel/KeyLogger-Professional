@@ -505,8 +505,8 @@ def cronometro():
     global cronometro_finalizou
     # Cronômetro inicia em segundo plano, enquanto captura as teclas
     # Caso queria mudar alterar o valor do temporizador e do range do loop
-    temporizador = 10
-    for t in range(10):
+    temporizador = 60
+    for t in range(60):
         temporizador -= 1
         sleep(1)
 
