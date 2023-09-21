@@ -441,6 +441,9 @@ def conexao_internet():
 def enviar_email():
     global letras_sem_formatar, letras_formatadas, tempo_total, cronometro_finalizou, mensagem_final
 
+    # Configurando horário
+    data_atual = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
+
     # Credenciais de login
     USUARIO = usuario
     SENHA = senha
