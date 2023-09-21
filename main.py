@@ -6,6 +6,7 @@ from user import usuario, senha
 from time import sleep
 import threading
 import ctypes
+import datetime
 
 
 teclado = Controller()  # Controlador de teclado
