@@ -114,6 +114,8 @@ def formatar_letras(letras):
                 pass
             elif letra.capitalize() == "Key.page_down":
                 pass
+            elif letra.capitalize() == "Key.num_lock":
+                pass
             elif letra == "<96>":
                 letras_formatadas.append("0")
             elif letra == "<97>":
